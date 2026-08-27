@@ -20,18 +20,9 @@
 
 ## Preview
 
-Add screenshots to `docs/screenshots/` and uncomment the blocks below.
-
-<!--
 <p align="center">
   <img src="docs/screenshots/home.png" width="900" alt="Case catalog">
 </p>
-
-<p align="center">
-  <img src="docs/screenshots/case-opening.png" width="440" alt="Case opening">
-  <img src="docs/screenshots/inventory.png" width="440" alt="Inventory">
-</p>
--->
 
 ---
 
