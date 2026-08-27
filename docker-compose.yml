@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-steam_cases}
+      POSTGRES_USER: ${POSTGRES_USER:-steam_cases}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-steam_cases}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-steam_cases} -d ${POSTGRES_DB:-steam_cases}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+    command: python manage.py migrate
+    volumes:
+      - .:/app
+    networks:
+      - backend
+    depends_on:
+      db:
+        condition: service_healthy
+
+  django:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  fastapi:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+    command: uvicorn fastapi_app.main:app --host 0.0.0.0 --port 8001 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge

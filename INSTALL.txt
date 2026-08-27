@@ -1,0 +1,16 @@
+Скопируйте каталоги shared/management и файл tests/test_seed_demo.py в корень существующего проекта.
+
+Затем, если проект уже работает в Docker, перезапуск не обязателен из-за bind mount, но для надёжности можно выполнить:
+  docker compose restart django fastapi
+
+Создание демо-каталога:
+  docker compose exec django python manage.py seed_demo
+
+Например, по 50 доступных тестовых ключей на игру:
+  docker compose exec django python manage.py seed_demo --keys-per-item 50
+
+Проверка:
+  http://127.0.0.1:8001/
+  http://127.0.0.1:8000/admin/
+
+DEMO-* ключи не являются настоящими Steam-ключами.

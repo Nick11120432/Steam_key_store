@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Steam Cases — открытие кейсов с игровыми ключами" />
+  <title>Steam Cases</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-view-link="cases" aria-label="Steam Cases">
+      <span class="brand-mark">SC</span>
+      <span>
+        <strong>Steam Cases</strong>
+        <small>Game Key Drops</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Навигация">
+      <button class="nav-link active" data-view="cases">Кейсы</button>
+      <button class="nav-link auth-only hidden" data-view="inventory">Инвентарь</button>
+      <button class="nav-link auth-only hidden" data-view="history">История</button>
+    </nav>
+
+    <div class="account-area">
+      <div class="balance-pill auth-only hidden" title="Текущий баланс">
+        <span class="balance-dot"></span>
+        <span id="balanceValue">0.00</span>
+      </div>
+      <button id="topupButton" class="button button-ghost auth-only hidden">Пополнить</button>
+      <button id="loginButton" class="button button-secondary guest-only">Войти</button>
+      <button id="registerButton" class="button button-primary guest-only">Регистрация</button>
+      <div id="profileMenu" class="profile auth-only hidden">
+        <div class="avatar" id="profileAvatar">U</div>
+        <div class="profile-copy">
+          <strong id="profileName">User</strong>
+          <button id="logoutButton" class="logout-link">Выйти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section id="casesView" class="view active">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">DIGITAL GAME KEYS</span>
+          <h1>Открывай кейсы.<br /><span>Получай игры.</span></h1>
+          <p>Выбирай кейс, смотри реальные шансы выпадения и получай ключ активации из доступного пула.</p>
+          <div class="hero-actions">
+            <button class="button button-primary button-large" id="heroCasesButton">Смотреть кейсы</button>
+            <button class="button button-secondary button-large guest-only" id="heroLoginButton">Войти в аккаунт</button>
+          </div>
+          <div class="trust-row">
+            <span><i>✓</i> Прозрачные шансы</span>
+            <span><i>✓</i> Мгновенная выдача</span>
+            <span><i>✓</i> История операций</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-glow"></div>
+          <div class="floating-card card-back">
+            <span class="rarity-badge epic">EPIC</span>
+            <div class="mini-cover">GAME</div>
+          </div>
+          <div class="floating-card card-front">
+            <span class="rarity-badge legendary">LEGENDARY</span>
+            <div class="case-cube">
+              <div class="cube-logo">SC</div>
+            </div>
+            <strong>Premium Drop</strong>
+            <span>Открой и узнай результат</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head" id="casesSection">
+        <div>
+          <span class="eyebrow">КАТАЛОГ</span>
+          <h2>Доступные кейсы</h2>
+        </div>
+        <div class="filters">
+          <select id="rarityFilter" aria-label="Фильтр по редкости">
+            <option value="">Все редкости</option>
+            <option value="common">Common</option>
+            <option value="rare">Rare</option>
+            <option value="epic">Epic</option>
+            <option value="legendary">Legendary</option>
+          </select>
+          <input id="maxPriceFilter" type="number" min="0" step="0.01" placeholder="Цена до" />
+          <button id="applyFilters" class="button button-secondary">Применить</button>
+        </div>
+      </div>
+
+      <div id="casesGrid" class="cards-grid"></div>
+      <div id="casesEmpty" class="empty-state hidden">
+        <div class="empty-icon">◇</div>
+        <h3>Кейсы не найдены</h3>
+        <p>Добавь активные кейсы через Django Admin или измени фильтры.</p>
+      </div>
+    </section>
+
+    <section id="inventoryView" class="view">
+      <div class="section-head page-heading">
+        <div>
+          <span class="eyebrow">МОЯ КОЛЛЕКЦИЯ</span>
+          <h2>Инвентарь</h2>
+          <p>Выданные тебе игровые ключи.</p>
+        </div>
+        <button id="refreshInventory" class="button button-secondary">Обновить</button>
+      </div>
+      <div id="inventoryGrid" class="inventory-grid"></div>
+      <div id="inventoryEmpty" class="empty-state hidden">
+        <div class="empty-icon">⌁</div>
+        <h3>Инвентарь пуст</h3>
+        <p>Открой первый кейс — выигранный ключ появится здесь.</p>
+        <button class="button button-primary" data-view="cases">Перейти к кейсам</button>
+      </div>
+    </section>
+
+    <section id="historyView" class="view">
+      <div class="section-head page-heading">
+        <div>
+          <span class="eyebrow">АКТИВНОСТЬ</span>
+          <h2>История открытий</h2>
+          <p>Все результаты открытий твоего аккаунта.</p>
+        </div>
+        <button id="refreshHistory" class="button button-secondary">Обновить</button>
+      </div>
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Кейс</th>
+              <th>Предмет</th>
+              <th>Редкость</th>
+              <th>Стоимость</th>
+              <th>Ключ</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+      <div id="historyEmpty" class="empty-state hidden">
+        <div class="empty-icon">↺</div>
+        <h3>Истории пока нет</h3>
+        <p>Твои открытия появятся здесь.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Steam Cases demo</span>
+    <span>•</span>
+    <a href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+    <span>•</span>
+    <a href="http://127.0.0.1:8000/admin/" target="_blank" rel="noreferrer">Django Admin</a>
+  </footer>
+
+  <div id="authModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-backdrop" data-close-modal="authModal"></div>
+    <div class="modal-panel auth-panel">
+      <button class="modal-close" data-close-modal="authModal" aria-label="Закрыть">×</button>
+      <div class="modal-brand"><span class="brand-mark">SC</span></div>
+      <h2 id="authTitle">Вход</h2>
+      <p id="authSubtitle">Войди, чтобы открывать кейсы и получать ключи.</p>
+
+      <form id="loginForm" class="auth-form">
+        <label>Имя пользователя<input name="username" autocomplete="username" required /></label>
+        <label>Пароль<input name="password" type="password" autocomplete="current-password" required /></label>
+        <button class="button button-primary button-full" type="submit">Войти</button>
+        <p class="form-switch">Нет аккаунта? <button type="button" id="switchToRegister">Зарегистрироваться</button></p>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <label>Имя пользователя<input name="username" minlength="3" maxlength="150" autocomplete="username" required /></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+        <label>Пароль<input name="password" type="password" minlength="8" autocomplete="new-password" required /></label>
+        <button class="button button-primary button-full" type="submit">Создать аккаунт</button>
+        <p class="form-switch">Уже есть аккаунт? <button type="button" id="switchToLogin">Войти</button></p>
+      </form>
+      <div id="authError" class="form-error hidden"></div>
+    </div>
+  </div>
+
+  <div id="caseModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="caseModalTitle">
+    <div class="modal-backdrop" data-close-modal="caseModal"></div>
+    <div class="modal-panel case-panel">
+      <button class="modal-close" data-close-modal="caseModal" aria-label="Закрыть">×</button>
+      <div id="caseModalContent"></div>
+    </div>
+  </div>
+
+  <div id="resultModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel result-panel">
+      <div class="result-rays"></div>
+      <span class="eyebrow">ТВОЙ ВЫИГРЫШ</span>
+      <h2 id="resultTitle">Поздравляем!</h2>
+      <div id="resultContent"></div>
+      <button id="closeResultButton" class="button button-primary button-full">Забрать в инвентарь</button>
+    </div>
+  </div>
+
+  <div id="topupModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="topupTitle">
+    <div class="modal-backdrop" data-close-modal="topupModal"></div>
+    <div class="modal-panel small-panel">
+      <button class="modal-close" data-close-modal="topupModal" aria-label="Закрыть">×</button>
+      <span class="eyebrow">ТЕСТОВЫЙ БАЛАНС</span>
+      <h2 id="topupTitle">Пополнение</h2>
+      <p>Демо-эндпоинт без реальной оплаты.</p>
+      <form id="topupForm" class="auth-form">
+        <label>Сумма<input name="amount" type="number" min="0.01" step="0.01" value="100.00" required /></label>
+        <button class="button button-primary button-full" type="submit">Пополнить баланс</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>
