@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Steam Cases Backend
 
 Backend-проект для сервиса открытия кейсов с ключами активации игр Steam.
@@ -445,3 +446,7 @@ PostgreSQL volume при этом сохраняется. Не добавляй 
 ### Важное замечание про JWT
 
 Текущий frontend хранит access token в `localStorage`, что удобно для локального demo/MVP. Для production-системы, особенно если сайт будет публичным и будет работать с реальными платежами/ключами, стоит рассмотреть короткоживущий access token и refresh token в `HttpOnly; Secure; SameSite` cookie, а также полноценную CSP/XSS-защиту.
+=======
+# Steam_key_store
+Full-stack platform for opening game cases built with Django, FastAPI, PostgreSQL, and Docker.
+>>>>>>> a267c440a811c536219079b817e9dc21a5597c97
